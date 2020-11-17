@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
-        userInterface?.getRuns()?.forEach {  /// for( int i =0 ; i< taille tableau ; i++)
+        userInterface?.getRuns()?.forEach {
             Log.d(
                 TAG,
                 "Show user POI : longitude = " +
