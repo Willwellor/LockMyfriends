@@ -1,4 +1,4 @@
-2package fr.esme.esme_map
+package fr.esme.esme_map
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
