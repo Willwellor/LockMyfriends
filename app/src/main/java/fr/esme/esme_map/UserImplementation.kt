@@ -10,16 +10,17 @@ class UserImplementation(val user: User) : UserInterface {
         return listOf(
             POI(
                 user,
-                "Monument",
+                "Carrefour",
                 5,
-                Position(0.2, 0.0),
+                Position(2.3904678, 48.8131163),
                 Category("Culture", Color())
             ),
             POI(
                 user,
-                "Sushi",
+                "Pedra Alta",
                 2,
-                Position(0.1, 0.0),
+                Position(2.3904678, 48.8131163),
+
                 Category("Food", Color())
             )
         )
@@ -47,7 +48,7 @@ class UserImplementation(val user: User) : UserInterface {
 
     override fun getMyPosition(): Position {
         //TODO ask GPS
-        return Position(0.0, 0.0)
+        return Position(2.3929998, 48.8140771 )
     }
 
 

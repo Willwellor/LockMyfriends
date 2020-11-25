@@ -1,8 +1,6 @@
 package fr.esme.esme_map
 
 import android.os.Bundle
-import android.util.Log
-import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -23,10 +21,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        // Add a marker in Sydney and move the camera
-        val sydney = LatLng(-34.0, 151.0)
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,50 +38,26 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         //BUTTON
         var button = findViewById<FloatingActionButton>(R.id.button)
-        var helloWorldTextView = findViewById<TextView>(R.id.helloWorldTextView)
 
         //CallBack
         button.setOnClickListener {
 
+            //afficher ma position
+            val myPosition = userInterface?.getMyPosition()
+            val myPos = LatLng(myPosition!!.latitude, myPosition.longitude)
+            mMap.addMarker(MarkerOptions().position(myPos).title("My Position"))
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myPos, 14f))
+
+            //TODO afficher les POI
+
             var POIString: String = ""
             userInterface?.getPOIs()?.forEach {
-
-                POIString += "\n " + it.name +"   longitude = " +
-                        it.position.longitude +
-                        " latitude =" + it.position.latitude
-
+                val poiPos = LatLng(it.position.latitude, it.position.longitude)
+                mMap.addMarker(MarkerOptions().position(poiPos).title(it.name))
             }
 
-            helloWorldTextView.text = POIString
 
         }
-
-        // Show user Position
-        Log.d(
-            TAG,
-            "Show user Position: longitude = " +
-                    userInterface?.getMyPosition()?.longitude +
-                    " latitude =" + userInterface?.getMyPosition()?.latitude
-        )
-
-        userInterface?.getPOIs()?.forEach {
-            Log.d(
-                TAG,
-                "Show user Run : longitude = " +
-                        it.position.longitude +
-                        " latitude =" + it.position.latitude
-            )
-        }
-
-        userInterface?.getRuns()?.forEach {
-            Log.d(
-                TAG,
-                "Show user POI : longitude = " +
-                        it.positions +
-                        " latitude =" + it.positions
-            )
-        }
-
     }
 
 }
