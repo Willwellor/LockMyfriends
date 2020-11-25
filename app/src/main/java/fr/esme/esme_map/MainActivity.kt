@@ -1,7 +1,7 @@
 package fr.esme.esme_map
 
-import android.opengl.Visibility
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
@@ -36,6 +36,29 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val user = User("JP") //Me
         val userInterface: UserInterface? = UserImplementation(user)
 
+        //thread UI =======>   thread2 ->
+        var i = 0
+        while (i < 10){
+            Thread.sleep(1000)
+            Log.d(TAG,"Im blocking")
+            i++;
+        }
+
+        var thread = Thread(
+            Runnable {
+                var i = 0
+                while (i < 10){
+                    Thread.sleep(1000)
+                    Log.d(TAG,"Im running")
+                    i++;
+                }
+
+            }
+        )
+
+        thread.start()
+
+
         //MAP
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
@@ -59,11 +82,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             val myPos = LatLng(myPosition!!.latitude, myPosition.longitude)
             mMap.addMarker(
                 MarkerOptions().position(myPos).icon(
-                    BitmapDescriptorFactory.fromBitmap(imageView.drawable.toBitmap(100,100))
+                    BitmapDescriptorFactory.fromBitmap(imageView.drawable.toBitmap(100, 100))
                 ).title("My Position")
             )
-
-
 
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myPos, 14f))
 
