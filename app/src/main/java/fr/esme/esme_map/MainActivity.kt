@@ -2,102 +2,105 @@ package fr.esme.esme_map
 
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.graphics.drawable.toBitmap
+import androidx.lifecycle.Observer
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.squareup.picasso.Picasso
 import fr.esme.esme_map.interfaces.UserInterface
-import fr.esme.esme_map.model.User
+import fr.esme.esme_map.model.POI
+import fr.esme.esme_map.model.Position
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private val TAG = MainActivity::class.qualifiedName
     private lateinit var mMap: GoogleMap
+    private lateinit var viewModel: MainActivityViewModel
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        viewModel.getPOIFromViewModel()
+        viewModel.getPositionFromViewModel()
 
     }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d(TAG, "onCreate")
 
         setContentView(R.layout.activity_main)
-
-        val user = User("JP") //Me
-        val userInterface: UserInterface? = UserImplementation(user)
-
-        //thread UI =======>   thread2 ->
-        var i = 0
-        while (i < 10){
-            Thread.sleep(1000)
-            Log.d(TAG,"Im blocking")
-            i++;
-        }
-
-        var thread = Thread(
-            Runnable {
-                var i = 0
-                while (i < 10){
-                    Thread.sleep(1000)
-                    Log.d(TAG,"Im running")
-                    i++;
-                }
-
-            }
-        )
-
-        thread.start()
-
 
         //MAP
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        //BUTTON
-        var button = findViewById<FloatingActionButton>(R.id.button)
-        var imageView = findViewById<ImageView>(R.id.imageView)
+        viewModel = MainActivityViewModel()
 
-        Picasso.get().load(user.imageUrl).into(imageView)
+        viewModel.poisLiveData.observe(this, { listPOIs ->
+            showPOI(listPOIs)
+        })
 
-        //TELECHARGER DEPUIS UNE URL
-        //CallBack
-        button.setOnClickListener {
-
-            //
-            imageView.visibility = View.INVISIBLE
-
-            //afficher ma position
-            val myPosition = userInterface?.getMyPosition()
-            val myPos = LatLng(myPosition!!.latitude, myPosition.longitude)
-            mMap.addMarker(
-                MarkerOptions().position(myPos).icon(
-                    BitmapDescriptorFactory.fromBitmap(imageView.drawable.toBitmap(100, 100))
-                ).title("My Position")
-            )
-
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myPos, 14f))
-
-            //TODO afficher les POI
-
-            var POIString: String = ""
-            userInterface?.getPOIs()?.forEach {
-                val poiPos = LatLng(it.position.latitude, it.position.longitude)
-                mMap.addMarker(MarkerOptions().position(poiPos).title(it.name))
-            }
+        viewModel.myPositionLiveData.observe(this, { position ->
+            showMyPosition(position)
+        })
 
 
+    }
+
+    //TODO show POI
+    fun showPOI(POIs: List<POI>) {
+        POIs?.forEach {
+            val poiPos = LatLng(it.position.latitude, it.position.longitude)
+            mMap.addMarker(MarkerOptions().position(poiPos).title(it.name))
         }
     }
 
+    //TODO show MyPosition
+    fun showMyPosition(position: Position) {
+        val myPos = LatLng(position.latitude, position.longitude)
+        mMap.addMarker(MarkerOptions().position(myPos).title(""))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myPos, 14f))
+    }
+
+
+    //TODO show Travel
+    //TODO show USer
+
+    override fun onStart() {
+        super.onStart()
+        Log.d(TAG, "onStart")
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d(TAG, "onResume")
+
+    }
+
+
+    override fun onStop() {
+        super.onStop()
+        Log.d(TAG, "onStop")
+
+    }
+
+
+    override fun onPause() {
+        super.onPause()
+        Log.d(TAG, "onPause")
+
+    }
+
+    override fun onDestroy() {
+        Log.d(TAG, "onDestroy")
+        super.onDestroy()
+
+        mMap.clear()
+    }
 }
