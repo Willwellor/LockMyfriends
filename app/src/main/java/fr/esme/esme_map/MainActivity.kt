@@ -16,6 +16,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.gson.Gson
 import com.squareup.picasso.Picasso
 import fr.esme.esme_map.model.Category
 import fr.esme.esme_map.model.POI
@@ -57,7 +58,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onActivityResult(requestCode, resultCode, data)
 
         if(requestCode == POI_ACTIVITY){
-            var t = data?.getStringExtra("POICREATE")
+            var t = data?.getStringExtra("poi")
+            showPOI(Gson().fromJson<POI>(t,POI::class.java))
         }
     }
 
