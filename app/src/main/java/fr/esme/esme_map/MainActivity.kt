@@ -1,5 +1,6 @@
 package fr.esme.esme_map
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -34,15 +35,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         mMap.setOnMapClickListener {
 
-            showPOI(
-                POI(
-                    User(""),
-                    "",
-                    0,
-                    Position(it.latitude, it.longitude),
-                    Category("", Color())
-                )
-            )
+            val intent = Intent(this, CreatePOIActivity::class.java).apply {
+                putExtra("LATLNG",it)
+            }
+
+            //intent.putExtra("LATLNG",it)
+
+
+            startActivity(intent)
 
 
         }
@@ -60,7 +60,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         findViewById<FloatingActionButton>(R.id.showFriendsButton).setOnClickListener {
             manageUserVisibility()
         }
-
 
         //MAP
         val mapFragment = supportFragmentManager

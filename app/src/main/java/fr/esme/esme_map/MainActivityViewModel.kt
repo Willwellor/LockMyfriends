@@ -26,13 +26,13 @@ class MainActivityViewModel : ViewModel() {
         //Simulation GPS
         Thread(
             Runnable {
-                Thread.sleep(3000)
+/*                Thread.sleep(300)
                 myPositionLiveData.postValue(Position(44.2012986, 1.8576953))
-                Thread.sleep(3000)
+                Thread.sleep(300)
                 myPositionLiveData.postValue(Position(46.141736, 0.404965))
-                Thread.sleep(3000)
+                Thread.sleep(300)
                 myPositionLiveData.postValue(Position(46.4351729231305, 4.65821921825409))
-                Thread.sleep(3000)
+                Thread.sleep(300)
                 myPositionLiveData.postValue(Position(44.7679, -0.3125))
                 Thread.sleep(3000)
                 myPositionLiveData.postValue(Position(43.7056788063795, 4.66414824128151))
@@ -46,7 +46,7 @@ class MainActivityViewModel : ViewModel() {
                 myPositionLiveData.postValue(Position(46.36354, 4.700442))
                 Thread.sleep(3000)
                 myPositionLiveData.postValue(Position(48.8736985969585, 2.32269108295441))
-                Thread.sleep(3000)
+                Thread.sleep(3000)*/
                 myPositionLiveData.postValue(Position(47.4698136, -0.5593384))
                 Thread.sleep(3000)
             }
@@ -54,7 +54,7 @@ class MainActivityViewModel : ViewModel() {
     }
 
     fun getPOIFromViewModel() { //TODO add filtre
-        poisLiveData.value = userInterface.getPOIs()
+        poisLiveData.value = userInterface.getPOIs() //json
     }
 
 
