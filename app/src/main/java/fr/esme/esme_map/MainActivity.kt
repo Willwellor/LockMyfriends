@@ -1,5 +1,7 @@
 package fr.esme.esme_map
 
+import android.app.Activity
+import android.app.Instrumentation
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -28,6 +30,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private var isFriendShow = false
 
 
+    private val POI_ACTIVITY = 1
+
+
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         viewModel.getPOIFromViewModel()
@@ -41,13 +46,21 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
             //intent.putExtra("LATLNG",it)
 
-
-            startActivity(intent)
+            startActivityForResult(intent, POI_ACTIVITY)
 
 
         }
 
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if(requestCode == POI_ACTIVITY){
+            var t = data?.getStringExtra("POICREATE")
+        }
+    }
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
