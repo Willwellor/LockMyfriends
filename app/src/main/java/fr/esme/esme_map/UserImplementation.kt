@@ -27,7 +27,7 @@ class UserImplementation(val user: User) : UserInterface {
     }
 
     override fun getRuns(): List<Run> {
-        //TODO call network
+        //TODO call network  ===> DB distance ===> DB ====> Code
         return listOf(
             Run(
                 user,
@@ -47,7 +47,7 @@ class UserImplementation(val user: User) : UserInterface {
     }
 
     override fun getMyPosition(): Position {
-        //TODO ask GPS
+        //TODO ask GPS TD
         return Position(2.3929998, 48.8140771 )
     }
 
