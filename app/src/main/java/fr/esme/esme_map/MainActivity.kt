@@ -1,27 +1,28 @@
 package fr.esme.esme_map
 
-import android.app.Activity
-import android.app.Instrumentation
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
+import android.location.Location
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
 import com.squareup.picasso.Picasso
-import fr.esme.esme_map.model.Category
 import fr.esme.esme_map.model.POI
 import fr.esme.esme_map.model.Position
-import fr.esme.esme_map.model.User
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -32,7 +33,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
     private val POI_ACTIVITY = 1
-
+    private lateinit var fusedLocationClient : FusedLocationProviderClient
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
@@ -42,10 +43,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.setOnMapClickListener {
 
             val intent = Intent(this, CreatePOIActivity::class.java).apply {
-                putExtra("LATLNG",it)
+                putExtra("LATLNG", it)
             }
-
-            //intent.putExtra("LATLNG",it)
 
             startActivityForResult(intent, POI_ACTIVITY)
 
@@ -57,12 +56,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if(requestCode == POI_ACTIVITY){
+        if (requestCode == POI_ACTIVITY) {
             var t = data?.getStringExtra("poi")
-            showPOI(Gson().fromJson<POI>(t,POI::class.java))
+            showPOI(Gson().fromJson<POI>(t, POI::class.java))
         }
     }
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,6 +90,47 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         })
 
 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+       ) {
+
+           this.requestPermissions(
+               arrayOf<String>(
+                   Manifest.permission.ACCESS_FINE_LOCATION,
+                   Manifest.permission.ACCESS_COARSE_LOCATION
+               ), 1
+           )
+       }
+
+        val locationRequest = LocationRequest.create()?.apply {
+            interval = 10000
+            fastestInterval = 5000
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        }
+
+        var locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult?) {
+                locationResult ?: return
+                for (location in locationResult.locations){
+                    showMyPosition(Position(location.latitude, location.longitude))
+                }
+            }
+        }
+
+        fusedLocationClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            Looper.getMainLooper()
+        )
+
     }
 
     //TODO show POI
@@ -116,10 +155,23 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     //TODO show MyPosition
     fun showMyPosition(position: Position) {
         val myPos = LatLng(position.latitude, position.longitude)
-        mMap.addMarker(MarkerOptions().position(myPos).title(""))
+
+
+        val circleOptions = CircleOptions()
+        circleOptions.center(myPos)
+        circleOptions.radius(80.0)
+        circleOptions.strokeColor(Color.WHITE)
+        circleOptions.fillColor(Color.BLACK)
+        circleOptions.strokeWidth(6f)
+
+        if(this::myPositionCircle.isInitialized) {
+            myPositionCircle.remove()
+        }
+        myPositionCircle =  mMap.addCircle(circleOptions)
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myPos, 14f))
     }
 
+    lateinit var myPositionCircle : Circle
 
     //TODO show Travel
 
@@ -157,8 +209,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         Picasso.get().load("https://assets.stickpng.com/images/5a8efbf0b15d5c051b36901e.png")
             .into(findViewById<ImageView>(R.id.friend3))
 
+
     }
 
+    var myPosition : Location? = null
 
     override fun onStop() {
         super.onStop()
