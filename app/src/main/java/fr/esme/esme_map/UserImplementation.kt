@@ -28,6 +28,10 @@ class UserImplementation(val user: User) : UserInterface {
 
     override fun getRuns(): List<Run> {
         //TODO call network  ===> DB distance ===> DB ====> Code
+
+        POIDao dao
+
+                return dao.
         return listOf(
             Run(
                 user,
