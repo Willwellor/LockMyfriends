@@ -9,9 +9,13 @@ import android.os.Bundle
 import android.os.Looper
 import android.util.Log
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.ImageView
+import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Room
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -21,6 +25,7 @@ import com.google.android.gms.maps.model.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
 import com.squareup.picasso.Picasso
+import fr.esme.esme_map.dao.AppDatabase
 import fr.esme.esme_map.model.POI
 import fr.esme.esme_map.model.Position
 
@@ -29,7 +34,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private val TAG = MainActivity::class.qualifiedName
     private lateinit var mMap: GoogleMap
     private lateinit var viewModel: MainActivityViewModel
-    private var isFriendShow = false
+    private var isFriendShow = true
 
 
     private val POI_ACTIVITY = 1
@@ -58,6 +63,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         if (requestCode == POI_ACTIVITY) {
             var t = data?.getStringExtra("poi")
+            var poi = Gson().fromJson<POI>(t, POI::class.java)
+            viewModel.savePOI(poi)
             showPOI(Gson().fromJson<POI>(t, POI::class.java))
         }
     }
@@ -79,7 +86,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        viewModel = MainActivityViewModel()
+        //BaseData
+        val db = Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java, "database-name"
+        ).build()
+
+
+
+        viewModel = MainActivityViewModel(db)
 
         viewModel.poisLiveData.observe(this, { listPOIs ->
             showPOIs(listPOIs)
@@ -130,7 +145,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             locationCallback,
             Looper.getMainLooper()
         )
-
     }
 
     //TODO show POI
@@ -180,14 +194,21 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         if (isFriendShow) {
             isFriendShow = false
-            findViewById<ImageView>(R.id.friend1).visibility = View.INVISIBLE
-            findViewById<ImageView>(R.id.friend2).visibility = View.INVISIBLE
-            findViewById<ImageView>(R.id.friend3).visibility = View.INVISIBLE
+            findViewById<ListView>(R.id.friendsListRecyclerview).visibility = View.INVISIBLE
         } else {
             isFriendShow = true
-            findViewById<ImageView>(R.id.friend1).visibility = View.VISIBLE
-            findViewById<ImageView>(R.id.friend2).visibility = View.VISIBLE
-            findViewById<ImageView>(R.id.friend3).visibility = View.VISIBLE
+
+            var friends = viewModel.getUsers()
+
+
+
+            val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, friends)
+            findViewById<ListView>(R.id.friendsListRecyclerview).adapter = adapter
+
+
+
+
+            findViewById<ListView>(R.id.friendsListRecyclerview).visibility = View.VISIBLE
         }
     }
 
@@ -202,13 +223,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         Log.d(TAG, "onResume")
 
         //TODO mettre une photo a mes potte
-        Picasso.get().load("https://assets.stickpng.com/images/5a8efbf0b15d5c051b36901e.png")
+      /*  Picasso.get().load("https://assets.stickpng.com/images/5a8efbf0b15d5c051b36901e.png")
             .into(findViewById<ImageView>(R.id.friend1))
         Picasso.get().load("https://assets.stickpng.com/images/5a8efbf0b15d5c051b36901e.png")
             .into(findViewById<ImageView>(R.id.friend2))
         Picasso.get().load("https://assets.stickpng.com/images/5a8efbf0b15d5c051b36901e.png")
-            .into(findViewById<ImageView>(R.id.friend3))
-
+            .into(findViewById<ImageView>(R.id.friend3))*/
 
     }
 

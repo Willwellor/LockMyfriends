@@ -1,4 +1,4 @@
-package fr.esme.esme_map
+package fr.esme.esme_map.dao
 
 import androidx.room.*
 import fr.esme.esme_map.model.POI
@@ -16,7 +16,7 @@ interface POIDao {
     fun updatePOI(poi: POI)
 
 
-    @Query("SELECT * FROM ")
-    fun getPOI() : List<POI>
+    @Query("SELECT * FROM poi")
+    fun getPOIs() : List<POI>
 
 }

@@ -23,23 +23,11 @@
         app:layout_constraintLeft_toLeftOf="parent"
         android:gravity="center">
 
-        <ImageView
-            android:id="@+id/friend1"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            />
+        <ListView
+            android:id="@+id/friendsListRecyclerview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
-        <ImageView
-            android:id="@+id/friend2"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            />
-
-        <ImageView
-            android:id="@+id/friend3"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/showFriendsButton"

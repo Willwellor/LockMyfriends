@@ -2,15 +2,17 @@ package fr.esme.esme_map
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import fr.esme.esme_map.dao.AppDatabase
 import fr.esme.esme_map.interfaces.UserInterface
 import fr.esme.esme_map.model.POI
 import fr.esme.esme_map.model.Position
 import fr.esme.esme_map.model.User
 
-class MainActivityViewModel : ViewModel() {
+class MainActivityViewModel(private val appDatabase: AppDatabase) : ViewModel() {
 
     private val user = User("JP") //Me
-    private val userInterface: UserInterface = UserImplementation(user) // HEAVY NETWORK TASK
+    private val userInterface: UserInterface =
+        UserImplementation(user, appDatabase) // HEAVY NETWORK TASK
 
 
     val poisLiveData: MutableLiveData<List<POI>> by lazy {
@@ -54,7 +56,21 @@ class MainActivityViewModel : ViewModel() {
     }
 
     fun getPOIFromViewModel() { //TODO add filtre
-        poisLiveData.value = userInterface.getPOIs() //json
+        Thread(
+            Runnable {
+                poisLiveData.postValue(userInterface.getPOIs())//json
+            }).start()
+    }
+
+    fun savePOI(poi: POI) {
+        Thread(
+            Runnable {
+                appDatabase.poiDao().createPOI(poi)
+            }).start()
+    }
+
+    fun getUsers(): List<User> {
+        return userInterface.getUsers()
     }
 
 

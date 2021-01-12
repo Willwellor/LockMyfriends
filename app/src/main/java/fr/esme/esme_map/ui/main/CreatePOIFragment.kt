@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -17,6 +18,7 @@ import fr.esme.esme_map.model.Category
 import fr.esme.esme_map.model.POI
 import fr.esme.esme_map.model.Position
 import fr.esme.esme_map.model.User
+import java.util.*
 
 class CreatePOIFragment : Fragment() {
 
@@ -43,17 +45,20 @@ class CreatePOIFragment : Fragment() {
 
         showPOI(poi)
 
+        val editiText = activity?.findViewById<EditText>(R.id.POINameEditText)
+
         activity?.findViewById<Button>(R.id.validateButton)?.setOnClickListener {
 
 
             //TODO REcuperer depuis le formulaire
 
             var poi: POI = POI(
-                User("JP"),
-                "Carrefour",
+                Any().hashCode(),
+                //User("JP"),
+                editiText?.text.toString(),
                 5,
                 Position(viewModel.latlng.latitude, viewModel.latlng.longitude),
-                Category("Culture", Color())
+               // Category("Culture", Color())
             )
 
 
