@@ -9,12 +9,9 @@ import android.os.Bundle
 import android.os.Looper
 import android.util.Log
 import android.view.View
-import android.widget.ArrayAdapter
-import android.widget.ImageView
 import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -200,12 +197,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
             var friends = viewModel.getUsers()
 
-
-
-            val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, friends)
+            val adapter = FriendsAdapter(this, ArrayList(friends))
             findViewById<ListView>(R.id.friendsListRecyclerview).adapter = adapter
-
-
 
 
             findViewById<ListView>(R.id.friendsListRecyclerview).visibility = View.VISIBLE

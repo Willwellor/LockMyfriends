@@ -39,7 +39,7 @@ class UserImplementation(val user: User, val appDatabase: AppDatabase) : UserInt
 
 
     override fun getUsers(): List<User> {
-        return listOf(user,user,user,user,user,user,user,user,user,user,user,user)
+        return listOf(user,user,user)
     }
 
 }
