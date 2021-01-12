@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, UserClickInterface
 
 
     private val POI_ACTIVITY = 1
+    private val USER_ACTIVITY = 2
     private lateinit var fusedLocationClient : FusedLocationProviderClient
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -243,6 +244,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, UserClickInterface
     override fun OnUserClick(user: User) {
 
         Log.d("ADAPTER", user.username)
+
+        val intent = Intent(this, UserActivity::class.java).apply {
+            putExtra("USER", Gson().toJson(user))
+        }
+
+        startActivityForResult(intent, USER_ACTIVITY)
+
 
 
     }
