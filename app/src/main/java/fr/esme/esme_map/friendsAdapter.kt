@@ -1,6 +1,7 @@
 package fr.esme.esme_map
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,6 +31,10 @@ class FriendsAdapter(private val context: Context, private val arrayList: java.u
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View? {
         var convertView = convertView
         convertView = LayoutInflater.from(context).inflate(R.layout.user_item_view, parent, false)
+
+        convertView.setOnClickListener {
+            Log.d("ADAPTER", arrayList[position].username)
+        }
 
         name = convertView.findViewById(R.id.userName)
         name.text = arrayList[position].username
