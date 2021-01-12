@@ -23,10 +23,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
 import com.squareup.picasso.Picasso
 import fr.esme.esme_map.dao.AppDatabase
+import fr.esme.esme_map.interfaces.UserClickInterface
 import fr.esme.esme_map.model.POI
 import fr.esme.esme_map.model.Position
+import fr.esme.esme_map.model.User
 
-class MainActivity : AppCompatActivity(), OnMapReadyCallback {
+class MainActivity : AppCompatActivity(), OnMapReadyCallback, UserClickInterface {
 
     private val TAG = MainActivity::class.qualifiedName
     private lateinit var mMap: GoogleMap
@@ -214,15 +216,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onResume() {
         super.onResume()
         Log.d(TAG, "onResume")
-
-        //TODO mettre une photo a mes potte
-      /*  Picasso.get().load("https://assets.stickpng.com/images/5a8efbf0b15d5c051b36901e.png")
-            .into(findViewById<ImageView>(R.id.friend1))
-        Picasso.get().load("https://assets.stickpng.com/images/5a8efbf0b15d5c051b36901e.png")
-            .into(findViewById<ImageView>(R.id.friend2))
-        Picasso.get().load("https://assets.stickpng.com/images/5a8efbf0b15d5c051b36901e.png")
-            .into(findViewById<ImageView>(R.id.friend3))*/
-
     }
 
     var myPosition : Location? = null
@@ -245,5 +238,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onDestroy()
 
         mMap.clear()
+    }
+
+    override fun OnUserClick(user: User) {
+
+        Log.d("ADAPTER", user.username)
+
+
     }
 }
