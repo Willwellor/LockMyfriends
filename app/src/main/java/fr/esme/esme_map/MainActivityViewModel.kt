@@ -28,7 +28,7 @@ class MainActivityViewModel(private val appDatabase: AppDatabase) : ViewModel() 
         //Simulation GPS
         Thread(
             Runnable {
-/*                Thread.sleep(300)
+               /* Thread.sleep(300)
                 myPositionLiveData.postValue(Position(44.2012986, 1.8576953))
                 Thread.sleep(300)
                 myPositionLiveData.postValue(Position(46.141736, 0.404965))
@@ -48,13 +48,14 @@ class MainActivityViewModel(private val appDatabase: AppDatabase) : ViewModel() 
                 myPositionLiveData.postValue(Position(46.36354, 4.700442))
                 Thread.sleep(3000)
                 myPositionLiveData.postValue(Position(48.8736985969585, 2.32269108295441))
-                Thread.sleep(3000)*/
-                myPositionLiveData.postValue(Position(47.4698136, -0.5593384))
                 Thread.sleep(3000)
+                myPositionLiveData.postValue(Position(47.4698136, -0.5593384))
+                Thread.sleep(3000)*/
             }
         ).start()
     }
 
+    //récupération des position dans la vue model
     fun getPOIFromViewModel() { //TODO add filtre
         Thread(
             Runnable {
@@ -62,6 +63,7 @@ class MainActivityViewModel(private val appDatabase: AppDatabase) : ViewModel() 
             }).start()
     }
 
+    //enregistrement dans la base de donnée
     fun savePOI(poi: POI) {
         Thread(
             Runnable {
@@ -69,6 +71,7 @@ class MainActivityViewModel(private val appDatabase: AppDatabase) : ViewModel() 
             }).start()
     }
 
+    //récuperation des utilisateurs
     fun getUsers(): List<User> {
         return userInterface.getUsers()
     }

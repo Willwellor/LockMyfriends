@@ -40,6 +40,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, UserClickInterface
     private val USER_ACTIVITY = 2
     private lateinit var fusedLocationClient : FusedLocationProviderClient
 
+    //génération de la carte depuis GoogleMap
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         viewModel.getPOIFromViewModel()
@@ -51,6 +52,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, UserClickInterface
                 putExtra("LATLNG", it)
             }
 
+            //activation de la vue avec la map
             startActivityForResult(intent, POI_ACTIVITY)
 
 
@@ -58,6 +60,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, UserClickInterface
 
     }
 
+    //
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -74,19 +77,20 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, UserClickInterface
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate")
 
+        //affichage de la page général
         setContentView(R.layout.activity_main)
 
-        //button
+        //affichage du bouton de la liste des amis ( ############# a changer pour avoir la liste des amis proche de nous ###############)
         findViewById<FloatingActionButton>(R.id.showFriendsButton).setOnClickListener {
             manageUserVisibility()
         }
 
-        //MAP
+        //affichage de maniere asynchrone de la carte dans la vue
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        //BaseData
+        //Base de donnée interne au téléphone
         val db = Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java, "database-name"
@@ -94,12 +98,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, UserClickInterface
 
 
 
+        //vue général
         viewModel = MainActivityViewModel(db)
 
+        //affichage des positions sur la vue
         viewModel.poisLiveData.observe(this, { listPOIs ->
             showPOIs(listPOIs)
         })
 
+        //affichage de ma position sur la vue
         viewModel.myPositionLiveData.observe(this, { position ->
             showMyPosition(position)
         })
@@ -125,12 +132,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, UserClickInterface
            )
        }
 
+        //requete de rafraichissement de la position renvoyée par le GPS
         val locationRequest = LocationRequest.create()?.apply {
             interval = 10000
             fastestInterval = 5000
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
 
+        //fonction de rapelle apres la mise a jour de la position GPS, rafraichissement de la page
         var locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult?) {
                 locationResult ?: return
@@ -147,6 +156,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, UserClickInterface
         )
     }
 
+    //liste des positions des lieux
     //TODO show POI
     fun showPOIs(POIs: List<POI>) {
         POIs?.forEach {
@@ -155,6 +165,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, UserClickInterface
         }
     }
 
+    //affichage de la position d'un lieu
     fun showPOI(poi: POI) {
         mMap.addMarker(
             MarkerOptions().position(
@@ -166,8 +177,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, UserClickInterface
         )
     }
 
+    //affichage de ma position par une pastille noir
     //TODO show MyPosition
     fun showMyPosition(position: Position) {
+
+        //mettre une condition sur la paosition pour eviter le rafraichissement de la page à chaque requète
+
         val myPos = LatLng(position.latitude, position.longitude)
 
 
@@ -241,6 +256,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, UserClickInterface
         mMap.clear()
     }
 
+    //activation de la page d'ajout d'une activité
     override fun OnUserClick(user: User) {
 
         Log.d("ADAPTER", user.username)
@@ -249,6 +265,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, UserClickInterface
             putExtra("USER", Gson().toJson(user))
         }
 
+        //activation de la vue d'ajout d'activité
         startActivityForResult(intent, USER_ACTIVITY)
 
 
