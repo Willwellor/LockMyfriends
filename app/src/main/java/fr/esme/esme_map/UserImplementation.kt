@@ -41,7 +41,7 @@ class UserImplementation(val user: User, val appDatabase: AppDatabase) : UserInt
         var fifi = User("FIFI")
         var loulou = User("LOULOU")
 
-        riri.imageUrl = "https://www.nautiljon.com/images/people/01/65/riri_chanteuse_83056.jpg"
+        riri.imageUrl = "https://media-exp1.licdn.com/dms/image/C4D03AQED0L9fW-ttrg/profile-displayphoto-shrink_800_800/0/1530112493429?e=1617840000&v=beta&t=6sJnJb-8PYLoCyP-QdRz_hkGLumlKq5-tczN7l8-WiI"
         fifi.imageUrl = "https://i.imgur.com/DvpvklR.png"
 
         return listOf(
